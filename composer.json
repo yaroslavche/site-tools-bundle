@@ -10,5 +10,31 @@
     ],
     "require": {
         "php": "^7.4"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^5.0",
+        "symfony/debug-pack": "^1.0",
+        "phpstan/phpstan": "^0.12.14",
+        "squizlabs/php_codesniffer": "^3.5",
+        "thecodingmachine/phpstan-strict-rules": "^0.12.0",
+        "infection/infection": "^0.15.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yaroslavche\\SiteToolsBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Yaroslavche\\SiteToolsBundle\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf",
+        "phpstan": "phpstan analyse src/ -c phpstan.neon --level=7 --no-progress -vv --memory-limit=-1",
+        "phpunit": "phpunit",
+        "infection": "infection --min-msi=50 --min-covered-msi=70 --log-verbosity=all",
+        "coverage": "phpunit --coverage-text --coverage-html ./build/coverage/html --coverage-clover ./build/coverage/clover.xml"
     }
 }
