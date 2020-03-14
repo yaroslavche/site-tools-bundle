@@ -35,7 +35,7 @@ class SiteToolsOnlineInactiveCommand extends Command
     }
 
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Start socket server with TDLib JsonClient')
@@ -50,7 +50,11 @@ class SiteToolsOnlineInactiveCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $gap = $input->getOption('gap');
+        $gap = intval($input->getOption('gap'));
+        if ($gap < 60) {
+            $io->error('Gap should be greater than 60 seconds.');
+            return 1;
+        }
         $onlineUsers = $this->onlineService->getOnlineUsers();
         $now = (new DateTimeImmutable())->getTimestamp();
         $usernames = [];

@@ -20,11 +20,11 @@ class YaroslavcheSiteToolsExtension extends Extension
     /**
      * Loads a specific configuration.
      *
-     * @param array $configs
+     * @param array<mixed> $configs
      * @param ContainerBuilder $container
      * @throws Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');

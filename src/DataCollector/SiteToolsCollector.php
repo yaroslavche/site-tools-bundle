@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yaroslavche\SiteToolsBundle\DataCollector;
 
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -33,7 +34,7 @@ class SiteToolsCollector extends DataCollector
      * @param Response $response
      * @param Throwable|null $exception
      */
-    public function collect(Request $request, Response $response, ?Throwable $exception = null)
+    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
     {
         $onlineUsers = $this->onlineService->getOnlineUsers();
         $this->data['online'] = $onlineUsers;
@@ -48,13 +49,13 @@ class SiteToolsCollector extends DataCollector
         return static::DATA_COLLECTOR_NAME;
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }
 
     /**
-     * @return array
+     * @return array<string, DateTimeImmutable>
      */
     public function getOnline(): array
     {
