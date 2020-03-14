@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+  http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- online service -->
+        <service id="yaroslavche_site_tools.service.online" class="Yaroslavche\SiteToolsBundle\Service\Online" public="true">
+            <argument key="$key">online</argument>
+        </service>
+        <service id="Yaroslavche\SiteToolsBundle\Service\Online" alias="yaroslavche_site_tools.service.online"
+                 public="false"/>
+
+        <!-- Data collector -->
+        <service id="Yaroslavche\SiteToolsBundle\DataCollector\SiteToolsCollector" public="false">
+            <argument type="service" id="yaroslavche_site_tools.service.online"/>
+            <tag name="data_collector"
+                 template="@YaroslavcheSiteTools/data_collector.html.twig"
+                 id="yaroslavche_site_tools.data_collector.site_tools"
+            />
+        </service>
+        <service id="Yaroslavche\SiteToolsBundle\Command\SiteToolsOnlineInactiveCommand">
+            <argument  />
+            <argument type="service" key="$onlineService" id="yaroslavche_site_tools.service.online" />
+            <argument type="service" key="$security" id="security.helper" />
+            <tag name="console.command" command="site-tools:online:inactive"/>
+        </service>
+    </services>
+</container>

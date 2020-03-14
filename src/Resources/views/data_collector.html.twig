@@ -1,0 +1,66 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+        <div class="sf-toolbar-icon">
+            <span class="sf-toolbar-value">{{ collector.online | length }}</span>
+            <span class="sf-toolbar-label">Online</span>
+        </div>
+    {% endset %}
+
+    {% set text %}
+        <div class="sf-toolbar-info-piece">
+            <b>Online</b>
+            <span class="sf-toolbar-status">{{ collector.online | length }}</span>
+        </div>
+    {% endset %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { 'link': true }) }}
+{% endblock %}
+
+{% block head %}
+    {{- parent() -}}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon"><img src="" alt=""/></span>
+        <strong>Site Tools</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    {# add keys config info #}
+    <h3>Config</h3>
+    <table class="">
+        <thead>
+        <tr>
+            <th scope="col" class="key">Key</th>
+            <th scope="col">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>online</th>
+            <td>Redis set key for storing online set. Also 'key:username' hash.</td>
+        </tr>
+        </tbody>
+    </table>
+    <h3>Online</h3>
+    <table class="">
+        <thead>
+        <tr>
+            <th scope="col" class="key">User</th>
+            <th scope="col">Active</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for username, active in collector.online %}
+            <tr>
+                <th>{{ username }}</th>
+                <td>{{ active | date('Y-m-d H:i:s') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
