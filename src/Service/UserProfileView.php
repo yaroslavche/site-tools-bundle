@@ -26,12 +26,17 @@ class UserProfileView
         $this->redis->connect('localhost');
     }
 
-    public function incrementCounter(UserInterface $user)
+    /** @param UserInterface $user */
+    public function increment(UserInterface $user): void
     {
         $this->redis->hIncrBy($this->key, $user->getUsername(), 1);
     }
 
-    public function getCounter(UserInterface $user): int
+    /**
+     * @param UserInterface $user
+     * @return int
+     */
+    public function count(UserInterface $user): int
     {
         return intval($this->redis->hGet($this->key, $user->getUsername()));
     }

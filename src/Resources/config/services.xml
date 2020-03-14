@@ -19,6 +19,7 @@
                  class="Yaroslavche\SiteToolsBundle\Service\UserRating"
                  public="true">
             <argument key="$key">user_rating</argument>
+            <argument key="$maxRating">5</argument>
         </service>
         <service id="Yaroslavche\SiteToolsBundle\Service\UserRating"
                  alias="yaroslavche_site_tools.service.user_rating"

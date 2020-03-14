@@ -35,8 +35,8 @@
         "phpcs": "phpcs",
         "phpcbf": "phpcbf",
         "phpstan": "phpstan analyse src/ -c phpstan.neon --level=7 --no-progress -vv --memory-limit=-1",
-        "phpunit": "phpunit",
+        "phpunit": "simple-phpunit",
         "infection": "infection --min-msi=50 --min-covered-msi=70 --log-verbosity=all",
-        "coverage": "phpunit --coverage-text --coverage-html ./build/coverage/html --coverage-clover ./build/coverage/clover.xml"
+        "coverage": "simple-phpunit --coverage-text --coverage-html ./build/coverage/html --coverage-clover ./build/coverage/clover.xml"
     }
 }
