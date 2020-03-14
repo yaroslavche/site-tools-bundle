@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Throwable;
-use Yaroslavche\SiteToolsBundle\Service\Online;
+use Yaroslavche\SiteToolsBundle\Service\UserOnline;
 
 /**
  * Class SiteToolsCollector
@@ -17,13 +17,13 @@ use Yaroslavche\SiteToolsBundle\Service\Online;
 class SiteToolsCollector extends DataCollector
 {
     public const DATA_COLLECTOR_NAME = 'yaroslavche_site_tools.data_collector.site_tools';
-    private Online $onlineService;
+    private UserOnline $onlineService;
 
     /**
      * SiteToolsCollector constructor.
-     * @param Online $onlineService
+     * @param UserOnline $onlineService
      */
-    public function __construct(Online $onlineService)
+    public function __construct(UserOnline $onlineService)
     {
         $this->onlineService = $onlineService;
     }

@@ -8,10 +8,10 @@ use Redis;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class Online
+ * Class UserOnline
  * @package Yaroslavche\SiteToolsBundle\Service
  */
-class Online
+class UserOnline
 {
     private Redis $redis;
     private string $key;
@@ -28,9 +28,7 @@ class Online
     }
 
 
-    /**
-     * @param UserInterface $user
-     */
+    /** @param UserInterface $user */
     public function setOnline(UserInterface $user): void
     {
         $this->redis->sAdd($this->key, $user->getUsername());
@@ -39,9 +37,7 @@ class Online
         ]);
     }
 
-    /**
-     * @param string $username
-     */
+    /** @param string $username */
     public function setOffline(string $username): void
     {
         $this->redis->sRem($this->key, $username);

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Security\Core\Security;
-use Yaroslavche\SiteToolsBundle\Service\Online;
+use Yaroslavche\SiteToolsBundle\Service\UserOnline;
 
 /**
  * Class SiteToolsOnlineInactiveCommand
@@ -19,15 +19,15 @@ use Yaroslavche\SiteToolsBundle\Service\Online;
 class SiteToolsOnlineInactiveCommand extends Command
 {
     protected static $defaultName = 'site-tools:online:inactive';
-    private Online $onlineService;
+    private UserOnline $onlineService;
     private Security $security;
 
     /**
      * SiteToolsOnlineInactive constructor.
-     * @param Online $onlineService
+     * @param UserOnline $onlineService
      * @param Security $security
      */
-    public function __construct(Online $onlineService, Security $security)
+    public function __construct(UserOnline $onlineService, Security $security)
     {
         parent::__construct();
         $this->onlineService = $onlineService;
@@ -39,7 +39,7 @@ class SiteToolsOnlineInactiveCommand extends Command
     {
         $this
             ->setDescription('Start socket server with TDLib JsonClient')
-            ->addOption('gap', null, InputOption::VALUE_OPTIONAL, 'Gap in seconds', 300);
+            ->addOption('gap', 'g', InputOption::VALUE_OPTIONAL, 'Gap in seconds', 300);
     }
 
     /**
@@ -50,9 +50,12 @@ class SiteToolsOnlineInactiveCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $verbose = $input->getOption('verbose');
         $gap = intval($input->getOption('gap'));
         if ($gap < 60) {
-            $io->error('Gap should be greater than 60 seconds.');
+            if ($verbose) {
+                $io->error('Gap should be greater than 60 seconds.');
+            }
             return 1;
         }
         $onlineUsers = $this->onlineService->getOnlineUsers();
@@ -69,11 +72,13 @@ class SiteToolsOnlineInactiveCommand extends Command
                 $usernames[] = $username;
             }
         }
-        if (!empty($usernames)) {
+        if (!empty($usernames) && $verbose) {
             $io->note(sprintf('Inactive more than %s seconds:', $gap));
             $io->listing($usernames);
         }
-        $io->success('Finished');
+        if ($verbose) {
+            $io->success('Finished');
+        }
 
         return 0;
     }
