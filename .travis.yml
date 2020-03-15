@@ -11,6 +11,8 @@ script:
   - composer phpunit
   - composer infection
   - composer coverage
+before_install:
+  - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 #after_success:
 #  - bash <(curl -s https://codecov.io/bash)
 #env:
