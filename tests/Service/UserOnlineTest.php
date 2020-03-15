@@ -40,6 +40,7 @@ class UserOnlineTest extends TestCase
         $this->assertArrayHasKey($user->getUsername(), $onlineUsers);
         $this->assertInstanceOf(\DateTimeImmutable::class, $onlineUsers['Alice']);
         $this->userOnline->setOffline($user);
+        $this->userOnline->setOfflineByUsername($user->getUsername());
         $onlineUsers = $this->userOnline->getOnlineUsers();
         $this->assertArrayNotHasKey($user->getUsername(), $onlineUsers);
         $this->assertSame(0, $this->userOnline->getOnlineCount());
