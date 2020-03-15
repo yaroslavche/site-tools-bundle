@@ -25,6 +25,16 @@
         <service id="Yaroslavche\SiteToolsBundle\Storage\StorageInterface $redis"
                  alias="yaroslavche_site_tools.storage.redis"/>
 
+        <!-- user friend service -->
+        <service id="yaroslavche_site_tools.service.user_friend"
+                 class="Yaroslavche\SiteToolsBundle\Service\UserFriend"
+                 public="true">
+            <argument type="service" key="$storage" id="yaroslavche_site_tools.storage"/>
+        </service>
+        <service id="Yaroslavche\SiteToolsBundle\Service\UserFriend"
+                 alias="yaroslavche_site_tools.service.user_friend"
+                 public="false"/>
+
         <!-- user like service -->
         <service id="yaroslavche_site_tools.service.user_like"
                  class="Yaroslavche\SiteToolsBundle\Service\UserLike"

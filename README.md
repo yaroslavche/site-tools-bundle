@@ -1,6 +1,5 @@
 ```php
-use DateTimeImmutable;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Yaroslavche\SiteToolsBundle\Service\UserFriend;
 use Yaroslavche\SiteToolsBundle\Service\UserLike;
 use Yaroslavche\SiteToolsBundle\Service\UserOnline;
 use Yaroslavche\SiteToolsBundle\Service\UserProfileView;
@@ -8,28 +7,28 @@ use Yaroslavche\SiteToolsBundle\Service\UserRating;
 
 class UserService
 {
-    private Security $security;
+    private UserFriend $userFriendService;
+    private UserLike $userLikeService;
     private UserOnline $userOnlineService;
     private UserProfileView $userProfileViewService;
-    private UserLike $userLikeService;
     private UserRating $userRatingService;
 
     /**
      * UserService constructor.
-     * @param Security $security
+     * @param UserFriend $userFriendService
      * @param UserLike $userLikeService
      * @param UserOnline $userOnlineService
      * @param UserProfileView $userProfileViewService
      * @param UserRating $userRatingService
      */
     public function __construct(
-        Security $security,
+        UserFriend $userFriendService,
         UserLike $userLikeService,
         UserOnline $userOnlineService,
         UserProfileView $userProfileViewService,
         UserRating $userRatingService
     ) {
-        $this->security = $security;
+        $this->userFriendService = $userFriendService;
         $this->userLikeService = $userLikeService;
         $this->userOnlineService = $userOnlineService;
         $this->userProfileViewService = $userProfileViewService;
@@ -41,7 +40,7 @@ class UserService
         $user1 = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Alice');
         $user2 = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Bob');
         
-        ## like
+        # like
         /** @var array<string> $likes */
         $likes = $this->userLikeService->get($user1);
         $this->userLikeService->add($user1, $user2);
@@ -60,7 +59,8 @@ class UserService
 
         # profile view
         $this->userProfileViewService->increment($user1);
-        $this->userProfileViewService->count($user1);
+        /** @var int $count */
+        $count = $this->userProfileViewService->count($user1);
 
         # rating (NOT IMPLEMENTED YET)
         /** @var float $rating */
@@ -69,6 +69,12 @@ class UserService
         $ratings = $this->userRatingService->getRatings($user1);
         $this->userRatingService->add($user1, $user2, 5);
         $this->userRatingService->remove($user1, $user2);
+        
+        # friend
+        /** @var array<string> $friends */
+        $friends = $this->userFriendService->get($user1);
+        $this->userFriendService->add($user1, $user2);
+        $this->userFriendService->remove($user1, $user2);
     }
 }
 ```

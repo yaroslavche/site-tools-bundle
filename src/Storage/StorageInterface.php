@@ -28,7 +28,7 @@ interface StorageInterface
 
     /**
      * @param UserInterface $user
-     * @return array<string>
+     * @return array<string> $usernames
      */
     public function getLikes(UserInterface $user): array;
 
@@ -108,4 +108,22 @@ interface StorageInterface
      * @return float
      */
     public function getRating(UserInterface $user): float;
+
+    /**
+     * @param UserInterface $user
+     * @param UserInterface $applicantUser
+     */
+    public function addFriend(UserInterface $user, UserInterface $applicantUser): void;
+
+    /**
+     * @param UserInterface $user
+     * @param UserInterface $applicantUser
+     */
+    public function removeFriend(UserInterface $user, UserInterface $applicantUser): void;
+
+    /**
+     * @param UserInterface $user
+     * @return array<string> $usernames
+     */
+    public function getFriends(UserInterface $user): array;
 }

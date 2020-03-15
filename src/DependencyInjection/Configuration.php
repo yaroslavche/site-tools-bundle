@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Yaroslavche\SiteToolsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -23,10 +24,9 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder(YaroslavcheSiteToolsExtension::EXTENSION_ALIAS);
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
-        $rootNode
-            ->children()
-                ->scalarNode('host')->isRequired()->end()
-            ->end();
+        $hostChild = $rootNode->children();
+        $hostChild->scalarNode('host')->isRequired();
+        $rootNode->end();
         return $treeBuilder;
     }
 }

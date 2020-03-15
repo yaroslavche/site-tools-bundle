@@ -7,7 +7,6 @@ use DateTimeImmutable;
 use Redis;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Yaroslavche\SiteToolsBundle\Exception\StorageException;
 
 /**
  * Class RedisStorage
@@ -22,7 +21,6 @@ class RedisStorage implements StorageInterface
     /**
      * RedisStorage constructor.
      * @param array<string> $config
-     * @throws StorageException
      */
     public function __construct(array $config = [])
     {
@@ -44,7 +42,7 @@ class RedisStorage implements StorageInterface
             ->setAllowedTypes('readTimeout', ['null', 'float']);
         $config = $resolver->resolve($config);
         $this->redis = new Redis();
-        $connected = $this->redis->connect(
+        $this->redis->connect(
             $config['host'],
             $config['port'],
             $config['timeout'],
@@ -52,9 +50,6 @@ class RedisStorage implements StorageInterface
             $config['retryInterval'],
             $config['readTimeout'],
         );
-        if ($connected !== true) {
-            throw new StorageException('Failed to connect');
-        }
     }
 
     /** @inheritDoc */
@@ -162,5 +157,29 @@ class RedisStorage implements StorageInterface
     {
         // TODO: Implement getRating() method.
         return .0;
+    }
+
+    /** @inheritDoc */
+    public function addFriend(UserInterface $user, UserInterface $applicantUser): void
+    {
+        $this->redis->sAdd(
+            sprintf(static::KEY_FORMAT, 'user_friend', $applicantUser->getUsername()),
+            $user->getUsername()
+        );
+    }
+
+    /** @inheritDoc */
+    public function removeFriend(UserInterface $user, UserInterface $applicantUser): void
+    {
+        $this->redis->sRem(
+            sprintf(static::KEY_FORMAT, 'user_friend', $applicantUser->getUsername()),
+            $user->getUsername()
+        );
+    }
+
+    /** @inheritDoc */
+    public function getFriends(UserInterface $user): array
+    {
+        return $this->redis->sMembers(sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()));
     }
 }
