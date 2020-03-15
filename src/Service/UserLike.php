@@ -27,7 +27,7 @@ class UserLike
      * @param UserInterface $voterUser
      * @param UserInterface $applicantUser
      */
-    public function add(UserInterface $voterUser, UserInterface $applicantUser): void
+    public function like(UserInterface $voterUser, UserInterface $applicantUser): void
     {
         $this->storage->addLike($voterUser, $applicantUser);
     }
@@ -36,7 +36,7 @@ class UserLike
      * @param UserInterface $voterUser
      * @param UserInterface $applicantUser
      */
-    public function remove(UserInterface $voterUser, UserInterface $applicantUser): void
+    public function unlike(UserInterface $voterUser, UserInterface $applicantUser): void
     {
         $this->storage->removeLike($voterUser, $applicantUser);
     }

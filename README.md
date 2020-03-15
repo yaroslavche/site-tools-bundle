@@ -43,8 +43,8 @@ class UserService
         # like
         /** @var array<string> $likes */
         $likes = $this->userLikeService->get($alice);
-        $this->userLikeService->add($alice, $bob);
-        $this->userLikeService->remove($alice, $bob);
+        $this->userLikeService->like($alice, $bob);
+        $this->userLikeService->unlike($alice, $bob);
 
         # online
         /** @var int $count */

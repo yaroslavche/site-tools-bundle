@@ -33,11 +33,11 @@ class UserLikeTest extends TestCase
     {
         $voter = new User('Alice');
         $applicant = new User('Bob');
-        $this->userLike->add($voter, $applicant);
+        $this->userLike->like($voter, $applicant);
         $likes = $this->userLike->get($applicant);
         $this->assertSame(1, count($likes));
         $this->assertSame($voter->getUsername(), $likes[0]);
-        $this->userLike->remove($voter, $applicant);
+        $this->userLike->unlike($voter, $applicant);
         $likes = $this->userLike->get($applicant);
         $this->assertSame(0, count($likes));
     }
