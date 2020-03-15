@@ -68,7 +68,7 @@ class SiteToolsOnlineInactiveCommand extends Command
         foreach ($onlineUsers as $username => $active) {
             $seconds = $now - $active->getTimestamp();
             if ($seconds > $gap) {
-                $this->onlineService->setOffline($username);
+                $this->onlineService->setOfflineByUsername($username);
                 $usernames[] = $username;
             }
         }

@@ -5,7 +5,8 @@ namespace Yaroslavche\SiteToolsBundle\Service;
 
 use Redis;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Yaroslavche\SiteToolsBundle\Exception\InvalidRatingRange;
+use Yaroslavche\SiteToolsBundle\Exception\InvalidRatingRangeException;
+use Yaroslavche\SiteToolsBundle\Storage\StorageInterface;
 
 /**
  * Class UserRating
@@ -13,36 +14,32 @@ use Yaroslavche\SiteToolsBundle\Exception\InvalidRatingRange;
  */
 class UserRating
 {
-    public const KEY_FORMAT = '%s:%s';
-    
-    private Redis $redis;
-    private string $key;
+    private StorageInterface $storage;
     private int $maxRating;
 
     /**
-     * Rating constructor.
-     * @param string $key
+     * UserRating constructor.
+     * @param StorageInterface $storage
+     * @param int $maxRating
      */
-    public function __construct(string $key, int $maxRating = 5)
+    public function __construct(StorageInterface $storage, int $maxRating = 5)
     {
-        $this->key = $key;
+        $this->storage = $storage;
         $this->maxRating = $maxRating;
-        $this->redis = new Redis();
-        $this->redis->connect('localhost');
     }
 
     /**
      * @param UserInterface $voterUser
      * @param UserInterface $applicantUser
      * @param int $rating
-     * @throws InvalidRatingRange
+     * @throws InvalidRatingRangeException
      */
     public function add(UserInterface $voterUser, UserInterface $applicantUser, int $rating): void
     {
         if ($rating > $this->maxRating || $rating < 0) {
-            throw new InvalidRatingRange(sprintf('%d [0, %d]', $rating, $this->maxRating));
+            throw new InvalidRatingRangeException(sprintf('%d [0, %d]', $rating, $this->maxRating));
         }
-        $key = sprintf(static::KEY_FORMAT, $this->key, $applicantUser->getUsername());
+        $this->storage->addRating($voterUser, $applicantUser, $rating);
     }
 
     /**
@@ -51,23 +48,24 @@ class UserRating
      */
     public function remove(UserInterface $voterUser, UserInterface $applicantUser): void
     {
+        $this->storage->removeRating($voterUser, $applicantUser);
     }
 
     /**
      * @param UserInterface $user
      * @return array<string>
      */
-    public function get(UserInterface $user): array
+    public function getRatings(UserInterface $user): array
     {
-        return [];
+        return $this->storage->getRatings($user);
     }
 
     /**
      * @param UserInterface $user
      * @return float
      */
-    public function average(UserInterface $user): float
+    public function getRating(UserInterface $user): float
     {
-        return .0;
+        return $this->storage->getRating($user);
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Yaroslavche\SiteToolsBundle\Service;
 
 use DateTimeImmutable;
-use Redis;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Yaroslavche\SiteToolsBundle\Storage\StorageInterface;
 
 /**
  * Class UserOnline
@@ -13,49 +13,47 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserOnline
 {
-    public const KEY_FORMAT = '%s:%s';
-    public const HASH_KEY_ACTIVE = 'active';
-    
-    private Redis $redis;
-    private string $key;
+    private StorageInterface $storage;
 
     /**
-     * Online constructor.
-     * @param string $key
+     * Rating constructor.
+     * @param StorageInterface $storage
      */
-    public function __construct(string $key)
+    public function __construct(StorageInterface $storage)
     {
-        $this->key = $key;
-        $this->redis = new Redis();
-        $this->redis->connect('localhost');
+        $this->storage = $storage;
     }
-
 
     /** @param UserInterface $user */
     public function setOnline(UserInterface $user): void
     {
-        $this->redis->sAdd($this->key, $user->getUsername());
-        $this->redis->hMSet(sprintf(static::KEY_FORMAT, $this->key, $user->getUsername()), [
-            static::HASH_KEY_ACTIVE => time(),
-        ]);
+        $this->storage->setOnline($user);
     }
 
-    /** @param string $username */
-    public function setOffline(string $username): void
+    /** @param UserInterface $user */
+    public function setOffline(UserInterface $user): void
     {
-        $this->redis->sRem($this->key, $username);
-        $this->redis->hDel(sprintf(static::KEY_FORMAT, $this->key, $username), ...[static::HASH_KEY_ACTIVE]);
+        $this->storage->setOffline($user);
+    }
+
+    /**
+     * @param string $username
+     */
+    public function setOfflineByUsername(string $username): void
+    {
+        $this->storage->setOfflineByUsername($username);
+    }
+
+    /** @return int */
+    public function getOnlineCount(): int
+    {
+        return $this->storage->getOnlineCount();
     }
 
     /** @return array<string, DateTimeImmutable> $username => $active */
     public function getOnlineUsers(): array
     {
-        $onlineUsers = array_flip($this->redis->sMembers($this->key));
-        foreach ($onlineUsers as $username => $i) {
-            $activeTimestamp = $this->redis->hGet(sprintf(static::KEY_FORMAT, $this->key, $username), static::HASH_KEY_ACTIVE);
-            $onlineUsers[$username] = (new DateTimeImmutable())->setTimestamp((int)$activeTimestamp);
-        }
-        return $onlineUsers;
+        return $this->storage->getOnlineUsers();
     }
 
     /**
@@ -64,6 +62,6 @@ class UserOnline
      */
     public function isOnline(UserInterface $user): bool
     {
-        return $this->redis->sIsMember($this->key, $user->getUsername());
+        return $this->storage->isOnline($user);
     }
 }

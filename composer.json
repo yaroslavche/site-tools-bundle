@@ -11,7 +11,8 @@
     "require": {
         "php": "^7.4",
         "ext-redis": "*",
-        "symfony/security-core": "^5.0"
+        "symfony/security-core": "^5.0",
+        "symfony/options-resolver": "^5.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

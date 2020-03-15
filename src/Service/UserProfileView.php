@@ -5,6 +5,7 @@ namespace Yaroslavche\SiteToolsBundle\Service;
 
 use Redis;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Yaroslavche\SiteToolsBundle\Storage\StorageInterface;
 
 /**
  * Class UserProfileView
@@ -12,24 +13,21 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserProfileView
 {
-    private Redis $redis;
-    private string $key;
+    private StorageInterface $storage;
 
     /**
-     * Online constructor.
-     * @param string $key
+     * UserProfileView constructor.
+     * @param StorageInterface $storage
      */
-    public function __construct(string $key)
+    public function __construct(StorageInterface $storage)
     {
-        $this->key = $key;
-        $this->redis = new Redis();
-        $this->redis->connect('localhost');
+        $this->storage = $storage;
     }
 
     /** @param UserInterface $user */
     public function increment(UserInterface $user): void
     {
-        $this->redis->hIncrBy($this->key, $user->getUsername(), 1);
+        $this->storage->profileViewIncrement($user);
     }
 
     /**
@@ -38,6 +36,6 @@ class UserProfileView
      */
     public function count(UserInterface $user): int
     {
-        return intval($this->redis->hGet($this->key, $user->getUsername()));
+        return $this->storage->profileViewCount($user);
     }
 }

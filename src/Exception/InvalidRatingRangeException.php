@@ -9,6 +9,6 @@ use Exception;
  * Class InvalidRatingRange
  * @package Yaroslavche\SiteToolsBundle\Exception
  */
-class InvalidRatingRange extends Exception
+class InvalidRatingRangeException extends Exception
 {
 }

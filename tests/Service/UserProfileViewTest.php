@@ -5,6 +5,7 @@ namespace Yaroslavche\SiteToolsBundle\Tests\Service;
 
 use PHPUnit\Framework\TestCase;
 use Yaroslavche\SiteToolsBundle\Service\UserProfileView;
+use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
 use Yaroslavche\SiteToolsBundle\Tests\Fixture\User;
 
 /**
@@ -23,7 +24,8 @@ class UserProfileViewTest extends TestCase
 
     private function constructor(): void
     {
-        $this->userProfileView = new UserProfileView('test_user_profile_view');
+        $storage = new RedisStorage(['host' => 'localhost']);
+        $this->userProfileView = new UserProfileView($storage);
         $this->assertInstanceOf(UserProfileView::class, $this->userProfileView);
     }
 

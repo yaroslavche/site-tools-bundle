@@ -5,6 +5,7 @@ namespace Yaroslavche\SiteToolsBundle\Tests\Service;
 
 use PHPUnit\Framework\TestCase;
 use Yaroslavche\SiteToolsBundle\Service\UserRating;
+use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
 use Yaroslavche\SiteToolsBundle\Tests\Fixture\User;
 
 /**
@@ -23,7 +24,8 @@ class UserRatingTest extends TestCase
 
     private function constructor(): void
     {
-        $this->userRating = new UserRating('test_user_rating');
+        $storage = new RedisStorage(['host' => 'localhost']);
+        $this->userRating = new UserRating($storage, 5);
         $this->assertInstanceOf(UserRating::class, $this->userRating);
     }
 
@@ -40,7 +42,7 @@ class UserRatingTest extends TestCase
         $this->userRating->add($voter2, $applicant, 4);
 //        $this->assertSame(4.5, $this->userRating->average($applicant));
         $this->userRating->remove($voter, $applicant);
-        $ratings = $this->userRating->get($applicant);
+        $ratings = $this->userRating->getRatings($applicant);
         $this->assertSame(0, count($ratings));
     }
 

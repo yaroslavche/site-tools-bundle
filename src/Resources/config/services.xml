@@ -4,11 +4,42 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <!-- redis storage service -->
+        <service id="Yaroslavche\SiteToolsBundle\Storage\RedisStorage"
+                 public="true">
+            <argument key="$config" type="collection">
+                <argument key="host">localhost</argument>
+                <argument key="port">6379</argument>
+                <argument key="timeout">0.0</argument>
+                <argument key="reserved">null</argument>
+                <argument key="retryInterval">0</argument>
+                <argument key="readTimeout">0.0</argument>
+            </argument>
+        </service>
+        <service id="Yaroslavche\SiteToolsBundle\Storage\StorageInterface"
+                 alias="Yaroslavche\SiteToolsBundle\Storage\RedisStorage"/>
+        <service id="yaroslavche_site_tools.storage"
+                 alias="Yaroslavche\SiteToolsBundle\Storage\StorageInterface"/>
+        <service id="Yaroslavche\SiteToolsBundle\Storage\StorageInterface $redis"
+                 alias="yaroslavche_site_tools.storage.redis"/>
+
+        <!-- user like service -->
+        <service id="yaroslavche_site_tools.service.user_like"
+                 class="Yaroslavche\SiteToolsBundle\Service\UserLike"
+                 public="true">
+            <argument type="service" key="$storage" id="yaroslavche_site_tools.storage"/>
+        </service>
+        <service id="Yaroslavche\SiteToolsBundle\Service\UserLike"
+                 alias="yaroslavche_site_tools.service.user_like"
+                 public="false"/>
+
         <!-- user online service -->
         <service id="yaroslavche_site_tools.service.user_online"
                  class="Yaroslavche\SiteToolsBundle\Service\UserOnline"
                  public="true">
-            <argument key="$key">user_online</argument>
+            <argument type="service" key="$storage" id="yaroslavche_site_tools.storage"/>
         </service>
         <service id="Yaroslavche\SiteToolsBundle\Service\UserOnline"
                  alias="yaroslavche_site_tools.service.user_online"
@@ -18,28 +49,18 @@
         <service id="yaroslavche_site_tools.service.user_rating"
                  class="Yaroslavche\SiteToolsBundle\Service\UserRating"
                  public="true">
-            <argument key="$key">user_rating</argument>
+            <argument type="service" key="$storage" id="yaroslavche_site_tools.storage"/>
             <argument key="$maxRating">5</argument>
         </service>
         <service id="Yaroslavche\SiteToolsBundle\Service\UserRating"
                  alias="yaroslavche_site_tools.service.user_rating"
                  public="false"/>
 
-        <!-- user like service -->
-        <service id="yaroslavche_site_tools.service.user_like"
-                 class="Yaroslavche\SiteToolsBundle\Service\UserLike"
-                 public="true">
-            <argument key="$key">user_like</argument>
-        </service>
-        <service id="Yaroslavche\SiteToolsBundle\Service\UserLike"
-                 alias="yaroslavche_site_tools.service.user_like"
-                 public="false"/>
-
         <!-- user profile view service -->
         <service id="yaroslavche_site_tools.service.user_profile_view"
                  class="Yaroslavche\SiteToolsBundle\Service\UserProfileView"
                  public="true">
-            <argument key="$key">user_profile_view</argument>
+            <argument type="service" key="$storage" id="yaroslavche_site_tools.storage"/>
         </service>
         <service id="Yaroslavche\SiteToolsBundle\Service\UserProfileView"
                  alias="yaroslavche_site_tools.service.user_profile_view"

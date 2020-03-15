@@ -5,6 +5,7 @@ namespace Yaroslavche\SiteToolsBundle\Tests\Service;
 
 use PHPUnit\Framework\TestCase;
 use Yaroslavche\SiteToolsBundle\Service\UserOnline;
+use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
 use Yaroslavche\SiteToolsBundle\Tests\Fixture\User;
 
 /**
@@ -23,7 +24,8 @@ class UserOnlineTest extends TestCase
 
     private function constructor(): void
     {
-        $this->userOnline = new UserOnline('test_user_online');
+        $storage = new RedisStorage(['host' => 'localhost']);
+        $this->userOnline = new UserOnline($storage);
         $this->assertInstanceOf(UserOnline::class, $this->userOnline);
     }
 
@@ -34,11 +36,13 @@ class UserOnlineTest extends TestCase
         $this->assertTrue($this->userOnline->isOnline($user));
         $onlineUsers = $this->userOnline->getOnlineUsers();
         $this->assertSame(1, count($onlineUsers));
+        $this->assertSame(1, $this->userOnline->getOnlineCount());
         $this->assertArrayHasKey($user->getUsername(), $onlineUsers);
         $this->assertInstanceOf(\DateTimeImmutable::class, $onlineUsers['Alice']);
-        $this->userOnline->setOffline($user->getUsername());
+        $this->userOnline->setOffline($user);
         $onlineUsers = $this->userOnline->getOnlineUsers();
         $this->assertArrayNotHasKey($user->getUsername(), $onlineUsers);
+        $this->assertSame(0, $this->userOnline->getOnlineCount());
         $this->assertFalse($this->userOnline->isOnline($user));
     }
 

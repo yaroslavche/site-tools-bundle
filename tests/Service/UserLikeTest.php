@@ -5,6 +5,7 @@ namespace Yaroslavche\SiteToolsBundle\Tests\Service;
 
 use PHPUnit\Framework\TestCase;
 use Yaroslavche\SiteToolsBundle\Service\UserLike;
+use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
 use Yaroslavche\SiteToolsBundle\Tests\Fixture\User;
 
 /**
@@ -23,7 +24,8 @@ class UserLikeTest extends TestCase
 
     private function constructor(): void
     {
-        $this->userLike = new UserLike('test_user_like');
+        $storage = new RedisStorage(['host' => 'localhost']);
+        $this->userLike = new UserLike($storage);
         $this->assertInstanceOf(UserLike::class, $this->userLike);
     }
 

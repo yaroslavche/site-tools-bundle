@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Yaroslavche\SiteToolsBundle\Service;
 
-use Redis;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Yaroslavche\SiteToolsBundle\Storage\StorageInterface;
 
 /**
  * Class UserLike
@@ -12,20 +12,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserLike
 {
-    public const KEY_FORMAT = '%s:%s';
-
-    private Redis $redis;
-    private string $key;
+    private StorageInterface $storage;
 
     /**
      * Rating constructor.
-     * @param string $key
+     * @param StorageInterface $storage
      */
-    public function __construct(string $key)
+    public function __construct(StorageInterface $storage)
     {
-        $this->key = $key;
-        $this->redis = new Redis();
-        $this->redis->connect('localhost');
+        $this->storage = $storage;
     }
 
     /**
@@ -34,10 +29,7 @@ class UserLike
      */
     public function add(UserInterface $voterUser, UserInterface $applicantUser): void
     {
-        $this->redis->sAdd(
-            sprintf(static::KEY_FORMAT, $this->key, $applicantUser->getUsername()),
-            $voterUser->getUsername()
-        );
+        $this->storage->addLike($voterUser, $applicantUser);
     }
 
     /**
@@ -46,10 +38,7 @@ class UserLike
      */
     public function remove(UserInterface $voterUser, UserInterface $applicantUser): void
     {
-        $this->redis->sRem(
-            sprintf(static::KEY_FORMAT, $this->key, $applicantUser->getUsername()),
-            $voterUser->getUsername()
-        );
+        $this->storage->removeLike($voterUser, $applicantUser);
     }
 
     /**
@@ -58,6 +47,6 @@ class UserLike
      */
     public function get(UserInterface $user): array
     {
-        return $this->redis->sMembers(sprintf(static::KEY_FORMAT, $this->key, $user->getUsername()));
+        return $this->storage->getLikes($user);
     }
 }

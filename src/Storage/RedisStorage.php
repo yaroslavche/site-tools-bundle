@@ -1,0 +1,166 @@
+<?php
+declare(strict_types=1);
+
+namespace Yaroslavche\SiteToolsBundle\Storage;
+
+use DateTimeImmutable;
+use Redis;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Yaroslavche\SiteToolsBundle\Exception\StorageException;
+
+/**
+ * Class RedisStorage
+ * @package Yaroslavche\SiteToolsBundle\Storage
+ */
+class RedisStorage implements StorageInterface
+{
+    public const KEY_FORMAT = '%s:%s';
+    public const HASH_KEY_ACTIVE = 'active';
+    private Redis $redis;
+
+    /**
+     * RedisStorage constructor.
+     * @param array<string> $config
+     * @throws StorageException
+     */
+    public function __construct(array $config = [])
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'host' => 'localhost',
+            'port' => 6379,
+            'timeout' => .0,
+            'reserved' => null,
+            'retryInterval' => 0,
+            'readTimeout' => .0,
+        ]);
+        $resolver
+            ->setAllowedTypes('host', ['null', 'string'])
+            ->setAllowedTypes('port', ['null', 'int'])
+            ->setAllowedTypes('timeout', ['null', 'float'])
+            ->setAllowedTypes('reserved', ['null'])
+            ->setAllowedTypes('retryInterval', ['null', 'int'])
+            ->setAllowedTypes('readTimeout', ['null', 'float']);
+        $config = $resolver->resolve($config);
+        $this->redis = new Redis();
+        $connected = $this->redis->connect(
+            $config['host'],
+            $config['port'],
+            $config['timeout'],
+            $config['reserved'],
+            $config['retryInterval'],
+            $config['readTimeout'],
+        );
+        if ($connected !== true) {
+            throw new StorageException('Failed to connect');
+        }
+    }
+
+    /** @inheritDoc */
+    public function addLike(UserInterface $voterUser, UserInterface $applicantUser): void
+    {
+        $this->redis->sAdd(
+            sprintf(static::KEY_FORMAT, 'user_like', $applicantUser->getUsername()),
+            $voterUser->getUsername()
+        );
+    }
+
+    /** @inheritDoc */
+    public function removeLike(UserInterface $voterUser, UserInterface $applicantUser): void
+    {
+        $this->redis->sRem(
+            sprintf(static::KEY_FORMAT, 'user_like', $applicantUser->getUsername()),
+            $voterUser->getUsername()
+        );
+    }
+
+    /** @inheritDoc */
+    public function getLikes(UserInterface $user): array
+    {
+        return $this->redis->sMembers(sprintf(static::KEY_FORMAT, 'user_like', $user->getUsername()));
+    }
+
+    /** @inheritDoc */
+    public function setOnline(UserInterface $user): void
+    {
+        $this->redis->sAdd('user_online', $user->getUsername());
+        $this->redis->hMSet(sprintf(static::KEY_FORMAT, 'user_online', $user->getUsername()), [
+            static::HASH_KEY_ACTIVE => time(),
+        ]);
+    }
+
+    /** @inheritDoc */
+    public function setOffline(UserInterface $user): void
+    {
+        $this->setOfflineByUsername($user->getUsername());
+    }
+
+    /** @inheritDoc */
+    public function setOfflineByUsername(string $username): void
+    {
+        $this->redis->sRem('user_online', $username);
+        $this->redis->hDel(sprintf(static::KEY_FORMAT, 'user_online', $username), ...[static::HASH_KEY_ACTIVE]);
+    }
+
+    /** @inheritDoc */
+    public function getOnlineCount(): int
+    {
+        return count($this->redis->sMembers('user_online'));
+    }
+
+    /** @inheritDoc */
+    public function getOnlineUsers(): array
+    {
+        $onlineUsers = array_flip($this->redis->sMembers('user_online'));
+        foreach ($onlineUsers as $username => $i) {
+            $activeTimestamp = $this->redis->hGet(sprintf(static::KEY_FORMAT, 'user_online', $username), static::HASH_KEY_ACTIVE);
+            $onlineUsers[$username] = (new DateTimeImmutable())->setTimestamp((int)$activeTimestamp);
+        }
+        return $onlineUsers;
+    }
+
+    /** @inheritDoc */
+    public function isOnline(UserInterface $user): bool
+    {
+        return $this->redis->sIsMember('user_online', $user->getUsername());
+    }
+
+    /** @inheritDoc */
+    public function profileViewIncrement(UserInterface $user): void
+    {
+        $this->redis->hIncrBy('user_profile_view', $user->getUsername(), 1);
+    }
+
+    /** @inheritDoc */
+    public function profileViewCount(UserInterface $user): int
+    {
+        return intval($this->redis->hGet('user_profile_view', $user->getUsername()));
+    }
+
+    /** @inheritDoc */
+    public function addRating(UserInterface $voterUser, UserInterface $applicantUser, int $rating): void
+    {
+        // TODO: Implement addRating() method.
+    }
+
+    /** @inheritDoc */
+    public function removeRating(UserInterface $voterUser, UserInterface $applicantUser): void
+    {
+        // TODO: Implement removeRating() method.
+    }
+
+    /** @inheritDoc */
+    public function getRatings(UserInterface $user): array
+    {
+        // TODO: Implement getRatings() method.
+        return [];
+    }
+
+    /** @inheritDoc */
+    public function getRating(UserInterface $user): float
+    {
+        // TODO: Implement getRating() method.
+        return .0;
+    }
+}
