@@ -38,8 +38,8 @@ class UserService
     
     public function methods(): void
     {
-        $user1 = new class implements UserInterface { };
-        $user2 = new class implements UserInterface { };
+        $user1 = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Alice');
+        $user2 = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Bob');
         
         ## like
         /** @var array<string> $likes */
