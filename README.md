@@ -37,44 +37,44 @@ class UserService
     
     public function methods(): void
     {
-        $user1 = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Alice');
-        $user2 = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Bob');
+        $alice = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Alice');
+        $bob = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Bob');
         
         # like
         /** @var array<string> $likes */
-        $likes = $this->userLikeService->get($user1);
-        $this->userLikeService->add($user1, $user2);
-        $this->userLikeService->remove($user1, $user2);
+        $likes = $this->userLikeService->get($alice);
+        $this->userLikeService->add($alice, $bob);
+        $this->userLikeService->remove($alice, $bob);
 
         # online
         /** @var int $count */
         $count = $this->userOnlineService->getOnlineCount();
         /** @var array<string, DateTimeImmutable> $users $username => $active */
         $users = $this->userOnlineService->getOnlineUsers();
-        $this->userOnlineService->setOnline($user1);
-        $this->userOnlineService->setOffline($user1);
-        $this->userOnlineService->setOfflineByUsername($user1->getUsername());
+        $this->userOnlineService->setOnline($alice);
+        $this->userOnlineService->setOffline($alice);
+        $this->userOnlineService->setOfflineByUsername($alice->getUsername());
         /** @var bool $isOnline */
-        $isOnline = $this->userOnlineService->isOnline($user1);
+        $isOnline = $this->userOnlineService->isOnline($alice);
 
         # profile view
-        $this->userProfileViewService->increment($user1);
+        $this->userProfileViewService->increment($alice);
         /** @var int $count */
-        $count = $this->userProfileViewService->count($user1);
+        $count = $this->userProfileViewService->count($alice);
 
         # rating (NOT IMPLEMENTED YET)
         /** @var float $rating */
-        $rating = $this->userRatingService->getRating($user1);
+        $rating = $this->userRatingService->getRating($alice);
         /** @var array<string, int> $ratings $username => $rating */
-        $ratings = $this->userRatingService->getRatings($user1);
-        $this->userRatingService->add($user1, $user2, 5);
-        $this->userRatingService->remove($user1, $user2);
+        $ratings = $this->userRatingService->getRatings($alice);
+        $this->userRatingService->add($alice, $bob, 5);
+        $this->userRatingService->remove($alice, $bob);
         
         # friend
         /** @var array<string> $friends */
-        $friends = $this->userFriendService->get($user1);
-        $this->userFriendService->add($user1, $user2);
-        $this->userFriendService->remove($user1, $user2);
+        $friends = $this->userFriendService->get($alice);
+        $this->userFriendService->add($alice, $bob);
+        $this->userFriendService->remove($alice, $bob);
     }
 }
 ```
