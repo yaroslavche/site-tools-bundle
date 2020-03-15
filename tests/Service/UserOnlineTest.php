@@ -34,6 +34,10 @@ class UserOnlineTest extends TestCase
     {
         $user = new User('Alice');
         $user2 = new User('Bob');
+        # should be different key for test purposes and remove following foreach
+        foreach ($this->userOnline->getOnlineUsers() as $username => $active) {
+            $this->userOnline->setOfflineByUsername($username);
+        }
         $this->userOnline->setOnline($user);
         $this->assertTrue($this->userOnline->isOnline($user));
         $onlineUsers = $this->userOnline->getOnlineUsers();
