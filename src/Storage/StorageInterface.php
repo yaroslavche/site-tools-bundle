@@ -126,4 +126,11 @@ interface StorageInterface
      * @return array<string> $usernames
      */
     public function getFriends(UserInterface $user): array;
+
+    /**
+     * @param UserInterface $user
+     * @param UserInterface $applicantUser
+     * @return bool
+     */
+    public function isFriend(UserInterface $user, UserInterface $applicantUser): bool;
 }

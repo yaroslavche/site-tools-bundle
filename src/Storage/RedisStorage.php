@@ -182,4 +182,10 @@ class RedisStorage implements StorageInterface
     {
         return $this->redis->sMembers(sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()));
     }
+
+    public function isFriend(UserInterface $user, UserInterface $applicantUser): bool
+    {
+        // TODO: Implement isFriend() method.
+        return false;
+    }
 }

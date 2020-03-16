@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/yaroslavche/site-tools-bundle.svg?branch=master)](https://travis-ci.org/yaroslavche/site-tools-bundle)
+[![codecov](https://codecov.io/gh/yaroslavche/site-tools-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/yaroslavche/site-tools-bundle)
+[![Infection MSI](https://badge.stryker-mutator.io/github.com/yaroslavche/site-tools-bundle/master)](https://infection.github.io)
+
 ```php
 use Yaroslavche\SiteToolsBundle\Service\UserFriend;
 use Yaroslavche\SiteToolsBundle\Service\UserLike;

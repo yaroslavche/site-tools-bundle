@@ -49,4 +49,9 @@ class UserFriend
     {
         return $this->storage->getFriends($user);
     }
+
+    public function isFriend(UserInterface $user, UserInterface $applicantUser): bool
+    {
+        return $this->storage->isFriend($user, $applicantUser);
+    }
 }
