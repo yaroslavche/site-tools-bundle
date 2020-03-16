@@ -79,6 +79,8 @@ class UserService
         $friends = $this->userFriendService->get($alice);
         $this->userFriendService->add($alice, $bob);
         $this->userFriendService->remove($alice, $bob);
+        /** @var bool $isFriend */
+        $isFriend = $this->userFriendService->isFriend($alice, $bob);
     }
 }
 ```
