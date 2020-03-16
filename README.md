@@ -3,6 +3,9 @@
 [![Infection MSI](https://badge.stryker-mutator.io/github.com/yaroslavche/site-tools-bundle/master)](https://infection.github.io)
 
 ```php
+<?php
+
+use Symfony\Component\Security\Core\User\UserInterface;
 use Yaroslavche\SiteToolsBundle\Service\UserFriend;
 use Yaroslavche\SiteToolsBundle\Service\UserLike;
 use Yaroslavche\SiteToolsBundle\Service\UserOnline;
@@ -12,13 +15,6 @@ use Yaroslavche\SiteToolsBundle\Service\UserVote;
 
 class UserService
 {
-    private UserFriend $userFriendService;
-    private UserLike $userLikeService;
-    private UserOnline $userOnlineService;
-    private UserProfileView $userProfileViewService;
-    private UserRating $userRatingService;
-    private UserVote $userVoteService;
-
     /**
      * UserService constructor.
      * @param UserFriend $userFriendService
@@ -36,66 +32,56 @@ class UserService
         UserRating $userRatingService,
         UserVote $userVoteService
     ) {
-        $this->userFriendService = $userFriendService;
-        $this->userLikeService = $userLikeService;
-        $this->userOnlineService = $userOnlineService;
-        $this->userProfileViewService = $userProfileViewService;
-        $this->userRatingService = $userRatingService;
-        $this->userVoteService = $userVoteService;
-    }
-    
-    public function methods(): void
-    {
+        /** @var UserInterface $alice, $bob */
         $alice = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Alice');
         $bob = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Bob');
-        
-                
-        # friend
+
+        # -------------------- friend --------------------
         /** @var array<string> $friends */
-        $friends = $this->userFriendService->get($alice);
-        $this->userFriendService->add($alice, $bob);
-        $this->userFriendService->remove($alice, $bob);
+        $friends = $userFriendService->get($alice);
+        $userFriendService->add($alice, $bob);
+        $userFriendService->remove($alice, $bob);
         /** @var bool $isFriend */
-        $isFriend = $this->userFriendService->isFriend($alice, $bob);
+        $isFriend = $userFriendService->isFriend($alice, $bob);
 
-        # like
+        # -------------------- like --------------------
         /** @var array<string> $likes */
-        $likes = $this->userLikeService->get($alice);
-        $this->userLikeService->like($alice, $bob);
-        $this->userLikeService->unlike($alice, $bob);
+        $likes = $userLikeService->get($alice);
+        $userLikeService->like($alice, $bob);
+        $userLikeService->unlike($alice, $bob);
 
-        # online
+        # -------------------- online --------------------
         /** @var int $count */
-        $count = $this->userOnlineService->getOnlineCount();
+        $count = $userOnlineService->getOnlineCount();
         /** @var array<string, DateTimeImmutable> $users $username => $active */
-        $users = $this->userOnlineService->getOnlineUsers();
-        $this->userOnlineService->setOnline($alice);
-        $this->userOnlineService->setOffline($alice);
-        $this->userOnlineService->setOfflineByUsername($alice->getUsername());
+        $users = $userOnlineService->getOnlineUsers();
+        $userOnlineService->setOnline($alice);
+        $userOnlineService->setOffline($alice);
+        $userOnlineService->setOfflineByUsername($alice->getUsername());
         /** @var bool $isOnline */
-        $isOnline = $this->userOnlineService->isOnline($alice);
-
-        # profile view
-        $this->userProfileViewService->increment($alice);
-        /** @var int $count */
-        $count = $this->userProfileViewService->count($alice);
-
-        # rating
-        /** @var float $rating */
-        $rating = $this->userRatingService->getRating($alice);
-        /** @var array<string, int> $ratings $username => $rating */
-        $ratings = $this->userRatingService->getRatings($alice);
-        $this->userRatingService->add($alice, $bob, 5);
-        $this->userRatingService->remove($alice, $bob);
+        $isOnline = $userOnlineService->isOnline($alice);
         
-        # vote (NOT IMPLEMENTED YET)
-        $this->userVoteService->up($alice, $bob);
-        $this->userVoteService->down($alice, $bob);
-        $this->userVoteService->remove($alice, $bob);
+        # -------------------- profile view --------------------
+        $userProfileViewService->increment($alice);
+        /** @var int $count */
+        $count = $userProfileViewService->count($alice);
+
+        # -------------------- rating --------------------
+        /** @var float $rating */
+        $rating = $userRatingService->getRating($alice);
+        /** @var array<string, int> $ratings $username => $rating */
+        $ratings = $userRatingService->getRatings($alice);
+        $userRatingService->add($alice, $bob, 5);
+        $userRatingService->remove($alice, $bob);
+
+        # -------------------- vote (NOT IMPLEMENTED YET) --------------------
+        $userVoteService->up($alice, $bob);
+        $userVoteService->down($alice, $bob);
+        $userVoteService->remove($alice, $bob);
         /** @var array<string> $votes */
-        $votes = $this->userVoteService->get($bob);
+        $votes = $userVoteService->get($bob);
         /** @var int $voteValue */
-        $voteValue = $this->userVoteService->getValue($bob);
+        $voteValue = $userVoteService->getValue($bob);
     }
 }
 ```
