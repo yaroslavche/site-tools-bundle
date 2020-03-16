@@ -15,7 +15,7 @@ class UserLike
     private StorageInterface $storage;
 
     /**
-     * Rating constructor.
+     * UserLike constructor.
      * @param StorageInterface $storage
      */
     public function __construct(StorageInterface $storage)

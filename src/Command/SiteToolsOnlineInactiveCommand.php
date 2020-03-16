@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Core\Security;
 use Yaroslavche\SiteToolsBundle\Service\UserOnline;
 
 /**
@@ -20,18 +19,15 @@ class SiteToolsOnlineInactiveCommand extends Command
 {
     protected static $defaultName = 'site-tools:online:inactive';
     private UserOnline $onlineService;
-    private Security $security;
 
     /**
      * SiteToolsOnlineInactive constructor.
      * @param UserOnline $onlineService
-     * @param Security $security
      */
-    public function __construct(UserOnline $onlineService, Security $security)
+    public function __construct(UserOnline $onlineService)
     {
         parent::__construct();
         $this->onlineService = $onlineService;
-        $this->security = $security;
     }
 
 

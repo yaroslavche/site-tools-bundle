@@ -31,16 +31,24 @@ class UserFriendTest extends TestCase
 
     public function testFriendUnfriend()
     {
-        $voter = new User('Alice');
-        $applicant = new User('Bob');
-        $this->userFriend->add($voter, $applicant);
-        $friends = $this->userFriend->get($applicant);
-        $this->assertSame(1, count($friends));
-        $this->assertSame($voter->getUsername(), $friends[0]);
-        $this->assertTrue($this->userFriend->isFriend($applicant, $voter));
-        $this->userFriend->remove($voter, $applicant);
-        $friends = $this->userFriend->get($applicant);
-        $this->assertSame(0, count($friends));
+        $alice = new User('Alice');
+        $bob = new User('Bob');
+        $this->userFriend->add($alice, $bob);
+        $aliceFriends = $this->userFriend->get($alice);
+        $bobFriends = $this->userFriend->get($bob);
+        $this->assertSame(1, count($aliceFriends));
+        $this->assertSame(1, count($bobFriends));
+        $this->assertSame($alice->getUsername(), $bobFriends[0]);
+        $this->assertSame($bob->getUsername(), $aliceFriends[0]);
+        $this->assertTrue($this->userFriend->isFriend($bob, $alice));
+        $this->assertTrue($this->userFriend->isFriend($alice, $bob));
+        $this->userFriend->remove($bob, $alice);
+        $aliceFriends = $this->userFriend->get($alice);
+        $bobFriends = $this->userFriend->get($bob);
+        $this->assertSame(0, count($aliceFriends));
+        $this->assertSame(0, count($bobFriends));
+        $this->assertFalse($this->userFriend->isFriend($bob, $alice));
+        $this->assertFalse($this->userFriend->isFriend($alice, $bob));
     }
 
     protected function tearDown(): void

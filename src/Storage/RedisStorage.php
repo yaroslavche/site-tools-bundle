@@ -192,6 +192,10 @@ class RedisStorage implements StorageInterface
             sprintf(static::KEY_FORMAT, 'user_friend', $applicantUser->getUsername()),
             $user->getUsername()
         );
+        $this->redis->sAdd(
+            sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()),
+            $applicantUser->getUsername()
+        );
     }
 
     /** @inheritDoc */
@@ -201,6 +205,10 @@ class RedisStorage implements StorageInterface
             sprintf(static::KEY_FORMAT, 'user_friend', $applicantUser->getUsername()),
             $user->getUsername()
         );
+        $this->redis->sRem(
+            sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()),
+            $applicantUser->getUsername()
+        );
     }
 
     /** @inheritDoc */
@@ -209,11 +217,44 @@ class RedisStorage implements StorageInterface
         return $this->redis->sMembers(sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()));
     }
 
+    /** @inheritDoc */
     public function isFriend(UserInterface $user, UserInterface $applicantUser): bool
     {
         return $this->redis->sIsMember(
             sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()),
             $applicantUser->getUsername()
         );
+    }
+
+    /** @inheritDoc */
+    public function addUpVote(UserInterface $voterUser, UserInterface $applicantUser): void
+    {
+        // TODO: Implement addUpVote() method.
+    }
+
+    /** @inheritDoc */
+    public function addDownVote(UserInterface $voterUser, UserInterface $applicantUser): void
+    {
+        // TODO: Implement addDownVote() method.
+    }
+
+    /** @inheritDoc */
+    public function removeVote(UserInterface $voterUser, UserInterface $applicantUser): void
+    {
+        // TODO: Implement removeVote() method.
+    }
+
+    /** @inheritDoc */
+    public function getVotes(UserInterface $user): array
+    {
+        // TODO: Implement getVotes() method.
+        return [];
+    }
+
+    /** @inheritDoc */
+    public function getVotesValue(UserInterface $user): int
+    {
+        // TODO: Implement getVotesValue() method.
+        return 0;
     }
 }

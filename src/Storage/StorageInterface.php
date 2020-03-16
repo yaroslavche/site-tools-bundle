@@ -133,4 +133,34 @@ interface StorageInterface
      * @return bool
      */
     public function isFriend(UserInterface $user, UserInterface $applicantUser): bool;
+
+    /**
+     * @param UserInterface $voterUser
+     * @param UserInterface $applicantUser
+     */
+    public function addUpVote(UserInterface $voterUser, UserInterface $applicantUser): void;
+
+    /**
+     * @param UserInterface $voterUser
+     * @param UserInterface $applicantUser
+     */
+    public function addDownVote(UserInterface $voterUser, UserInterface $applicantUser): void;
+
+    /**
+     * @param UserInterface $voterUser
+     * @param UserInterface $applicantUser
+     */
+    public function removeVote(UserInterface $voterUser, UserInterface $applicantUser): void;
+
+    /**
+     * @param UserInterface $user
+     * @return array<string>
+     */
+    public function getVotes(UserInterface $user): array;
+
+    /**
+     * @param UserInterface $user
+     * @return int
+     */
+    public function getVotesValue(UserInterface $user): int;
 }

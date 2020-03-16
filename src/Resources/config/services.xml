@@ -76,6 +76,16 @@
                  alias="yaroslavche_site_tools.service.user_profile_view"
                  public="false"/>
 
+        <!-- user vote service -->
+        <service id="yaroslavche_site_tools.service.user_vote"
+                 class="Yaroslavche\SiteToolsBundle\Service\UserVote"
+                 public="true">
+            <argument type="service" key="$storage" id="yaroslavche_site_tools.storage"/>
+        </service>
+        <service id="Yaroslavche\SiteToolsBundle\Service\UserVote"
+                 alias="yaroslavche_site_tools.service.user_vote"
+                 public="false"/>
+
         <!-- Data collector -->
         <service id="Yaroslavche\SiteToolsBundle\DataCollector\SiteToolsCollector"
                  public="false">
@@ -87,7 +97,6 @@
         </service>
         <service id="Yaroslavche\SiteToolsBundle\Command\SiteToolsOnlineInactiveCommand">
             <argument type="service" key="$onlineService" id="yaroslavche_site_tools.service.user_online"/>
-            <argument type="service" key="$security" id="security.helper"/>
             <tag name="console.command" command="site-tools:online:inactive"/>
         </service>
     </services>

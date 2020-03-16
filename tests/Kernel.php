@@ -37,7 +37,6 @@ class Kernel extends SymfonyKernel
         return [
             new YaroslavcheSiteToolsBundle(),
             new FrameworkBundle(),
-            new SecurityBundle(),
         ];
     }
 
@@ -62,7 +61,6 @@ class Kernel extends SymfonyKernel
      */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-//        $routes->import(__DIR__ . '/../src/Resources/config/routes.xml');
     }
 
     /**
@@ -77,7 +75,6 @@ class Kernel extends SymfonyKernel
                 'secret' => 'test'
             ]
         );
-        $c->set('security.helper', new SecurityBundle());
         $c->loadFromExtension('yaroslavche_site_tools', static::getBundleConfig());
     }
 }

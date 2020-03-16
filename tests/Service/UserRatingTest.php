@@ -50,6 +50,7 @@ class UserRatingTest extends TestCase
         $ratings = $this->userRating->getRatings($bob);
         $this->assertArrayHasKey('Alice', $ratings);
         $this->assertArrayNotHasKey('Charlie', $ratings);
+        $this->assertSame(5, $ratings['Alice']);
         $this->assertSame(1, count($ratings));
         $this->assertSame(5.0, $this->userRating->getRating($bob));
 
@@ -57,6 +58,7 @@ class UserRatingTest extends TestCase
         $ratings = $this->userRating->getRatings($bob);
         $this->assertArrayHasKey('Alice', $ratings);
         $this->assertArrayHasKey('Charlie', $ratings);
+        $this->assertSame(4, $ratings['Charlie']);
         $this->assertSame(2, count($ratings));
         $this->assertSame(4.5, $this->userRating->getRating($bob));
 

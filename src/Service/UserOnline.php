@@ -16,7 +16,7 @@ class UserOnline
     private StorageInterface $storage;
 
     /**
-     * Rating constructor.
+     * UserOnline constructor.
      * @param StorageInterface $storage
      */
     public function __construct(StorageInterface $storage)

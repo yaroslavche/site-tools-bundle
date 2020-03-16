@@ -8,6 +8,7 @@ use Yaroslavche\SiteToolsBundle\Service\UserLike;
 use Yaroslavche\SiteToolsBundle\Service\UserOnline;
 use Yaroslavche\SiteToolsBundle\Service\UserProfileView;
 use Yaroslavche\SiteToolsBundle\Service\UserRating;
+use Yaroslavche\SiteToolsBundle\Service\UserVote;
 
 class UserService
 {
@@ -16,6 +17,7 @@ class UserService
     private UserOnline $userOnlineService;
     private UserProfileView $userProfileViewService;
     private UserRating $userRatingService;
+    private UserVote $userVoteService;
 
     /**
      * UserService constructor.
@@ -24,19 +26,22 @@ class UserService
      * @param UserOnline $userOnlineService
      * @param UserProfileView $userProfileViewService
      * @param UserRating $userRatingService
+     * @param UserVote $userVoteService
      */
     public function __construct(
         UserFriend $userFriendService,
         UserLike $userLikeService,
         UserOnline $userOnlineService,
         UserProfileView $userProfileViewService,
-        UserRating $userRatingService
+        UserRating $userRatingService,
+        UserVote $userVoteService
     ) {
         $this->userFriendService = $userFriendService;
         $this->userLikeService = $userLikeService;
         $this->userOnlineService = $userOnlineService;
         $this->userProfileViewService = $userProfileViewService;
         $this->userRatingService = $userRatingService;
+        $this->userVoteService = $userVoteService;
     }
     
     public function methods(): void
@@ -82,6 +87,15 @@ class UserService
         $ratings = $this->userRatingService->getRatings($alice);
         $this->userRatingService->add($alice, $bob, 5);
         $this->userRatingService->remove($alice, $bob);
+        
+        # vote (NOT IMPLEMENTED YET)
+        $this->userVoteService->up($alice, $bob);
+        $this->userVoteService->down($alice, $bob);
+        $this->userVoteService->remove($alice, $bob);
+        /** @var array<string> $votes */
+        $votes = $this->userVoteService->get($bob);
+        /** @var int $voteValue */
+        $voteValue = $this->userVoteService->getValue($bob);
     }
 }
 ```
@@ -117,4 +131,14 @@ use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
 $storage = new RedisStorage(['host' => 'localhost']);
 $userOnline = new UserOnline($storage);
 $users = $userOnline->getOnlineUsers();
+```
+
+## Dev
+
+```shell script
+$ composer phpcs
+$ composer phpstan
+$ composer phpunit
+$ composer coverage
+$ composer infection
 ```
