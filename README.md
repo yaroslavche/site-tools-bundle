@@ -44,6 +44,15 @@ class UserService
         $alice = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Alice');
         $bob = new \Yaroslavche\SiteToolsBundle\Tests\Fixture\User('Bob');
         
+                
+        # friend
+        /** @var array<string> $friends */
+        $friends = $this->userFriendService->get($alice);
+        $this->userFriendService->add($alice, $bob);
+        $this->userFriendService->remove($alice, $bob);
+        /** @var bool $isFriend */
+        $isFriend = $this->userFriendService->isFriend($alice, $bob);
+
         # like
         /** @var array<string> $likes */
         $likes = $this->userLikeService->get($alice);
@@ -66,21 +75,13 @@ class UserService
         /** @var int $count */
         $count = $this->userProfileViewService->count($alice);
 
-        # rating (NOT IMPLEMENTED YET)
+        # rating
         /** @var float $rating */
         $rating = $this->userRatingService->getRating($alice);
         /** @var array<string, int> $ratings $username => $rating */
         $ratings = $this->userRatingService->getRatings($alice);
         $this->userRatingService->add($alice, $bob, 5);
         $this->userRatingService->remove($alice, $bob);
-        
-        # friend
-        /** @var array<string> $friends */
-        $friends = $this->userFriendService->get($alice);
-        $this->userFriendService->add($alice, $bob);
-        $this->userFriendService->remove($alice, $bob);
-        /** @var bool $isFriend */
-        $isFriend = $this->userFriendService->isFriend($alice, $bob);
     }
 }
 ```
@@ -101,8 +102,19 @@ return [
 ];
 ```
 
+Config not implemented yet, but requires at least `host` key:
 ```yaml
 # config/packages/yaroslavche_site_tools.yaml
 yaroslavche_site_tools:
   host: 'localhost'
+```
+
+## Using without Symfony project
+```php
+use Yaroslavche\SiteToolsBundle\Service\UserOnline;
+use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
+
+$storage = new RedisStorage(['host' => 'localhost']);
+$userOnline = new UserOnline($storage);
+$users = $userOnline->getOnlineUsers();
 ```
