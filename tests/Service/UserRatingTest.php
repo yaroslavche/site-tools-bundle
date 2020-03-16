@@ -38,21 +38,39 @@ class UserRatingTest extends TestCase
 
     public function testRating()
     {
-        $voter = new User('Alice');
-        $voter2 = new User('Charlie');
-        $applicant = new User('Bob');
-        $this->userRating->add($voter, $applicant, 5);
-        $rating = $this->userRating->getRating($applicant);
-        $ratings = $this->userRating->getRatings($applicant);
-//        $this->assertSame(1, count($ratings));
-//        $this->assertSame($voter->getUsername(), $ratings[0]);
-//        $this->assertSame(5, $this->userRating->average($applicant));
-        $this->userRating->add($voter2, $applicant, 4);
-//        $this->assertSame(4.5, $this->userRating->average($applicant));
-        $this->userRating->remove($voter, $applicant);
-        $rating = $this->userRating->getRating($applicant);
-        $ratings = $this->userRating->getRatings($applicant);
+        $alice = new User('Alice');
+        $bob = new User('Bob');
+        $charlie = new User('Charlie');
+
+        $ratings = $this->userRating->getRatings($bob);
         $this->assertSame(0, count($ratings));
+        $this->assertSame(.0, $this->userRating->getRating($bob));
+
+        $this->userRating->add($alice, $bob, 5);
+        $ratings = $this->userRating->getRatings($bob);
+        $this->assertArrayHasKey('Alice', $ratings);
+        $this->assertArrayNotHasKey('Charlie', $ratings);
+        $this->assertSame(1, count($ratings));
+        $this->assertSame(5.0, $this->userRating->getRating($bob));
+
+        $this->userRating->add($charlie, $bob, 4);
+        $ratings = $this->userRating->getRatings($bob);
+        $this->assertArrayHasKey('Alice', $ratings);
+        $this->assertArrayHasKey('Charlie', $ratings);
+        $this->assertSame(2, count($ratings));
+        $this->assertSame(4.5, $this->userRating->getRating($bob));
+
+        $this->userRating->remove($alice, $bob);
+        $ratings = $this->userRating->getRatings($bob);
+        $this->assertArrayNotHasKey('Alice', $ratings);
+        $this->assertArrayHasKey('Charlie', $ratings);
+        $this->assertSame(1, count($ratings));
+        $this->assertSame(4.0, $this->userRating->getRating($bob));
+
+        $this->userRating->remove($charlie, $bob);
+        $ratings = $this->userRating->getRatings($bob);
+        $this->assertSame(0, count($ratings));
+        $this->assertSame(.0, $this->userRating->getRating($bob));
     }
 
     /**
@@ -68,6 +86,11 @@ class UserRatingTest extends TestCase
 
     protected function tearDown(): void
     {
-        # cleanup
+        # tmp solution, remove ratings
+        $alice = new User('Alice');
+        $bob = new User('Charlie');
+        $charlie = new User('Bob');
+        $this->userRating->remove($alice, $charlie);
+        $this->userRating->remove($bob, $charlie);
     }
 }

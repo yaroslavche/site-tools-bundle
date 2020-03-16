@@ -29,7 +29,7 @@ class UserFriendTest extends TestCase
         $this->assertInstanceOf(UserFriend::class, $this->userFriend);
     }
 
-    public function testLikeUnlike()
+    public function testFriendUnfriend()
     {
         $voter = new User('Alice');
         $applicant = new User('Bob');
@@ -37,6 +37,7 @@ class UserFriendTest extends TestCase
         $friends = $this->userFriend->get($applicant);
         $this->assertSame(1, count($friends));
         $this->assertSame($voter->getUsername(), $friends[0]);
+        $this->assertTrue($this->userFriend->isFriend($applicant, $voter));
         $this->userFriend->remove($voter, $applicant);
         $friends = $this->userFriend->get($applicant);
         $this->assertSame(0, count($friends));

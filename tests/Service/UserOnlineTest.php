@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Yaroslavche\SiteToolsBundle\Service\UserOnline;
 use Yaroslavche\SiteToolsBundle\Storage\RedisStorage;
 use Yaroslavche\SiteToolsBundle\Tests\Fixture\User;
+use Yaroslavche\SiteToolsBundle\Tests\Helper;
 
 /**
  * Class UserLikeTest
@@ -32,12 +33,9 @@ class UserOnlineTest extends TestCase
 
     public function testOnlineOffline()
     {
+        Helper::clearOnline($this->userOnline);
         $user = new User('Alice');
         $user2 = new User('Bob');
-        # should be different key for test purposes and remove following foreach
-        foreach ($this->userOnline->getOnlineUsers() as $username => $active) {
-            $this->userOnline->setOfflineByUsername($username);
-        }
         $this->userOnline->setOnline($user);
         $this->assertTrue($this->userOnline->isOnline($user));
         $onlineUsers = $this->userOnline->getOnlineUsers();

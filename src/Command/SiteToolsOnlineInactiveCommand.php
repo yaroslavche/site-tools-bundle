@@ -38,7 +38,7 @@ class SiteToolsOnlineInactiveCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Start socket server with TDLib JsonClient')
+            ->setDescription('Make offline inactive users')
             ->addOption('gap', 'g', InputOption::VALUE_OPTIONAL, 'Gap in seconds', 300);
     }
 

@@ -16,6 +16,7 @@ class RedisStorage implements StorageInterface
 {
     public const KEY_FORMAT = '%s:%s';
     public const HASH_KEY_ACTIVE = 'active';
+    public const HASH_KEY_RATING = 'rating';
     private Redis $redis;
 
     /**
@@ -49,7 +50,7 @@ class RedisStorage implements StorageInterface
             $config['reserved'],
             $config['retryInterval'],
             $config['readTimeout'],
-        );
+            );
     }
 
     /** @inheritDoc */
@@ -136,27 +137,52 @@ class RedisStorage implements StorageInterface
     /** @inheritDoc */
     public function addRating(UserInterface $voterUser, UserInterface $applicantUser, int $rating): void
     {
-        // TODO: Implement addRating() method.
+        $this->redis->sAdd(
+            sprintf(static::KEY_FORMAT, 'user_ratings', $applicantUser->getUsername()),
+            $voterUser->getUsername()
+        );
+        $this->redis->hMSet(sprintf(static::KEY_FORMAT, 'user_rating', $voterUser->getUsername()), [
+            static::HASH_KEY_RATING => $rating,
+        ]);
     }
 
     /** @inheritDoc */
     public function removeRating(UserInterface $voterUser, UserInterface $applicantUser): void
     {
-        // TODO: Implement removeRating() method.
+        $this->redis->sRem(
+            sprintf(static::KEY_FORMAT, 'user_ratings', $applicantUser->getUsername()),
+            $voterUser->getUsername()
+        );
+        $this->redis->hDel(
+            sprintf(static::KEY_FORMAT, 'user_rating', $applicantUser->getUsername()),
+            ...[static::HASH_KEY_RATING]
+        );
     }
 
     /** @inheritDoc */
     public function getRatings(UserInterface $user): array
     {
-        // TODO: Implement getRatings() method.
-        return [];
+        $ratings = array_flip($this->redis->sMembers(
+            sprintf(static::KEY_FORMAT, 'user_ratings', $user->getUsername())
+        ));
+        foreach ($ratings as $username => $i) {
+            $rating = $this->redis->hGet(
+                sprintf(static::KEY_FORMAT, 'user_rating', $username),
+                static::HASH_KEY_RATING
+            );
+            $ratings[$username] = (int)$rating;
+        }
+        return $ratings;
     }
 
     /** @inheritDoc */
     public function getRating(UserInterface $user): float
     {
-        // TODO: Implement getRating() method.
-        return .0;
+        $ratings = $this->getRatings($user);
+        if (empty($ratings)) {
+            return .0;
+        }
+        return array_sum($ratings) / count($ratings);
     }
 
     /** @inheritDoc */
@@ -185,7 +211,9 @@ class RedisStorage implements StorageInterface
 
     public function isFriend(UserInterface $user, UserInterface $applicantUser): bool
     {
-        // TODO: Implement isFriend() method.
-        return false;
+        return $this->redis->sIsMember(
+            sprintf(static::KEY_FORMAT, 'user_friend', $user->getUsername()),
+            $applicantUser->getUsername()
+        );
     }
 }
