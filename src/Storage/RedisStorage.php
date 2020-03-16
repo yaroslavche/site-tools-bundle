@@ -50,7 +50,7 @@ class RedisStorage implements StorageInterface
             $config['reserved'],
             $config['retryInterval'],
             $config['readTimeout'],
-            );
+        );
     }
 
     /** @inheritDoc */
